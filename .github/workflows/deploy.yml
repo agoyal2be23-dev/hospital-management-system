@@ -5,51 +5,16 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
-
-    - name: Create package.json if not exists
-      run: |
-        if [ ! -f "package.json" ]; then
-          echo '{"name":"hospital-management-system","version":"1.0.0","scripts":{"start":"cd backend && npm start"}}' > package.json
-        fi
-
-    - name: Install Backend Dependencies
-      run: |
-        cd backend
-        npm install
-
-    - name: Create index.html
-      run: |
-        mkdir -p public
-        echo '<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Hospital Management System</title>
-        </head>
-        <body>
-            <h1>Hospital Management System</h1>
-            <p>Backend API is running. Please access the API endpoints directly.</p>
-            <h2>Available Endpoints:</h2>
-            <ul>
-                <li>/api/patients - Manage patients</li>
-                <li>/api/doctors - Manage doctors</li>
-                <li>/api/appointments - Manage appointments</li>
-                <li>/api/medical-records - Manage medical records</li>
-            </ul>
-        </body>
-        </html>' > public/index.html
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: public
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./backend
+          enable_jekyll: false
